@@ -1,20 +1,14 @@
 FROM debian:8
 
-ENV OTRS_VERSION 5.0.17
+ENV OTRS_VERSION 6.0.x
 ENV OTRS_HOME /opt/otrs
 
 RUN apt-get update \
+	&& apt-get upgrade -y \
 	&& apt-get install -y --no-install-recommends \
 		wget \
-	&& wget --progress=bar:force http://ftp.otrs.org/pub/otrs/otrs-${OTRS_VERSION}.tar.gz \
-	&& mkdir -p ${OTRS_HOME} \
-	&& echo "Extracting OTRS archive otrs-${OTRS_VERSION}.tar.gz" \
-	&& tar -xzf otrs-${OTRS_VERSION}.tar.gz -C ${OTRS_HOME} --strip 1 \
-	&& echo "Extraction finished" \
-	&& rm -rf /var/lib/apt/lists/* otrs-${OTRS_VERSION}.tar.gz
-
-RUN apt-get update \
-	&& apt-get install -y --no-install-recommends \
+		git \
+		vim \
 		apache2 \
 		cron \
 		libapache2-mod-perl2 \
@@ -23,6 +17,7 @@ RUN apt-get update \
 		libcrypt-eksblowfish-perl \
 		libcrypt-ssleay-perl \
 		libdbd-mysql-perl \
+		libdbd-pg-perl \
 		libdbi-perl \
 		libdigest-md5-perl \
 		libio-socket-ssl-perl \
@@ -38,8 +33,11 @@ RUN apt-get update \
 		libxml-libxslt-perl \
 		libxml-parser-perl \
 		libyaml-libyaml-perl \
-		wget \
+		libdatetime-perl \
 	&& rm -rf /var/lib/apt/lists/*
+
+RUN  cd /opt \
+	&& git clone https://github.com/Bundesschiedsgericht/otrs
 
 ENV ENTRYPOINT_FILE /usr/local/sbin/entrypoint.sh
 
@@ -59,6 +57,7 @@ RUN useradd -G www-data -d ${OTRS_HOME} otrs \
 
 	&& cp /opt/otrs/var/cron/aaa_base.dist /opt/otrs/var/cron/aaa_base \
 	&& cp /opt/otrs/var/cron/otrs_daemon.dist /opt/otrs/var/cron/otrs_daemon \
+	&& mkdir /opt/otrs/var/tmp \
 	&& /opt/otrs/bin/Cron.sh start otrs \
 
 	&& cat /tmp/cron_apache_restart_workers | crontab - \
