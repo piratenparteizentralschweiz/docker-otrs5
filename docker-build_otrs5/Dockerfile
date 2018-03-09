@@ -37,7 +37,7 @@ RUN apt-get update \
 	&& rm -rf /var/lib/apt/lists/*
 
 RUN  cd /opt \
-	&& git clone -b rel-6_0_3_bsg https://github.com/Bundesschiedsgericht/otrs
+	&& git clone -b rel-6_0_6_bsg https://github.com/Bundesschiedsgericht/otrs
 
 ENV ENTRYPOINT_FILE /usr/local/sbin/entrypoint.sh
 
@@ -54,15 +54,12 @@ COPY cron_apache_restart_workers /tmp
 
 
 RUN useradd -G www-data -d ${OTRS_HOME} otrs \
-
 	&& cp /opt/otrs/var/cron/aaa_base.dist /opt/otrs/var/cron/aaa_base \
 	&& cp /opt/otrs/var/cron/otrs_daemon.dist /opt/otrs/var/cron/otrs_daemon \
 	&& mkdir /opt/otrs/var/tmp \
 	&& /opt/otrs/bin/Cron.sh start otrs \
-
 	&& cat /tmp/cron_apache_restart_workers | crontab - \
 	&& rm /tmp/cron_apache_restart_workers \
-	
 	&& ${OTRS_HOME}/bin/otrs.SetPermissions.pl --web-group=otrs \
 	&& chown www-data:www-data ${ENTRYPOINT_FILE} \
 	&& chmod 554 ${ENTRYPOINT_FILE} \
