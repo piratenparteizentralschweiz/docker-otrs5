@@ -8,6 +8,7 @@ docker run -d \
   -e OTRS_DB_NAME=otrs \
   -e OTRS_DB_USER=otrs \
   -e OTRS_DB_PASS=secret \
+  -v /otrs_data/gnupg:/opt/otrs/.gnupg \
   -p 5002:80 \
   exception/otrs \
   $1
