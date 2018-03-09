@@ -37,7 +37,7 @@ RUN apt-get update \
 	&& rm -rf /var/lib/apt/lists/*
 
 RUN  cd /opt \
-	&& git clone https://github.com/Bundesschiedsgericht/otrs
+	&& git clone -b rel-6_0_3_bsg https://github.com/Bundesschiedsgericht/otrs
 
 ENV ENTRYPOINT_FILE /usr/local/sbin/entrypoint.sh
 
@@ -69,6 +69,7 @@ RUN useradd -G www-data -d ${OTRS_HOME} otrs \
 	&& ln -s ${ENTRYPOINT_FILE} /entrypoint.sh
 
 VOLUME /opt/otrs
+RUN mkdir /opt/otrs/.gnupg
 
 EXPOSE 80
 CMD ["entrypoint.sh"]
