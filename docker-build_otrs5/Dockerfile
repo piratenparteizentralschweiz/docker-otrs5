@@ -37,7 +37,7 @@ RUN apt-get update \
 	&& rm -rf /var/lib/apt/lists/*
 
 RUN  cd /opt \
-	&& git clone -b rel-6_0_9_bsg https://github.com/Bundesschiedsgericht/otrs
+	&& git clone -b rel-6_0_11_bsg https://github.com/Bundesschiedsgericht/otrs
 
 ENV ENTRYPOINT_FILE /usr/local/sbin/entrypoint.sh
 
